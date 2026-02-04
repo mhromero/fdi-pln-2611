@@ -14,6 +14,7 @@ from .game_state import (
     has_reached_objective,
 )
 from .letters import analizar_carta, build_status_letter, generar_plan
+from .trader import analizar_oferta
 
 
 def legacy_main() -> None:
@@ -66,53 +67,57 @@ def main() -> None:
     print("Otros agentes:", people)
 
     needs, surplus = compute_needs_and_surplus(inventario, objetivo)
+
     print("Necesitamos:", needs)
     print("Podemos ofrecer (incluido oro, aunque luego lo filtraremos al enviar):", surplus)
 
     carta_estado = build_status_letter(alias, inventario, objetivo, needs, surplus)
+    print(carta_estado)
+    
+    """
     for p in people:
         try:
             print(f"→ Enviando carta de estado a {p}...")
             api.send_letter(p, carta_estado)
         except Exception as e:
             print(f"ERROR enviando carta a {p}: {e}")
-
+    """
     if has_reached_objective(inventario, objetivo):
         print("Ya hemos alcanzado el 100% de los recursos objetivo. No es necesario negociar más.")
         return
 
+
     print("→ Leyendo cartas del buzón...")
     try:
-        mailbox = api.get_mailbox()
+        mailbox = info["Buzon"]
     except Exception as e:
         print("ERROR leyendo buzón:", e)
         mailbox = []
 
+    print(mailbox)
+
     recursos_cambiaron = False
 
-    for carta in mailbox or []:
+    for id, content in zip(mailbox.keys(), mailbox.values()):
         print("===================================")
         print("Carta recibida (cruda):")
-        print(json.dumps(carta, ensure_ascii=False, indent=2))
+        print(json.dumps(content, ensure_ascii=False, indent=2))
 
-        analisis = analizar_carta(carta, info, objetivo)
+        analisis = analizar_carta(content, needs, surplus)
+
         print("Análisis LLM de la carta:")
         print(json.dumps(analisis, ensure_ascii=False, indent=2))
 
         tipo = analisis.get("tipo", "otro")
-        remitente = carta.get("alias") or carta.get("from") or carta.get("remitente")
-
-        if not remitente:
-            print("No se ha podido determinar el alias del remitente, se ignora la carta.")
-            continue
-
+      
         _, inventario, objetivo = extract_game_state(api.get_info())
         needs, surplus = compute_needs_and_surplus(inventario, objetivo)
 
         if tipo == "oferta":
-            oferta = analisis.get("oferta") or {}
-            pide = analisis.get("pide") or {}
+            decision = analizar_oferta(analisis, needs, surplus)
+            print(decision)
 
+        """
             if not oferta or not pide:
                 print("Oferta sin datos claros, se ignora.")
                 continue
@@ -245,5 +250,4 @@ def main() -> None:
                 api.send_letter(p, carta_estado_act)
             except Exception as e:
                 print(f"ERROR reenviando carta a {p}: {e}")
-
-    print("→ Ejecución finalizada.")
+    """

@@ -16,7 +16,7 @@ def ollama(prompt: str) -> str:
                 "prompt": prompt,
                 "stream": False,
             },
-            timeout=120,
+            timeout=180,
         )
         r.raise_for_status()
         return r.json()["response"]

@@ -3,6 +3,7 @@ Utilidades sobre el estado del juego: inventario, objetivo, necesidades y excede
 """
 
 from typing import Any, Dict, Tuple
+from .config import GOLD_RESOURCE_NAME
 
 
 def extract_game_state(info: Dict[str, Any]) -> Tuple[str, Dict[str, int], Dict[str, int]]:
@@ -14,21 +15,8 @@ def extract_game_state(info: Dict[str, Any]) -> Tuple[str, Dict[str, int], Dict[
     if not alias:
         raise ValueError("No se ha encontrado el alias en la respuesta de /info")
 
-    inventario = (
-        info.get("inventario")
-        or info.get("inventory")
-        or info.get("recursos")
-        or {}
-    )
-    objetivo = (
-        info.get("objetivo")
-        or info.get("objetivos")
-        or info.get("target")
-        or {}
-    )
-
-    if not isinstance(inventario, dict) or not isinstance(objetivo, dict):
-        raise ValueError("Los campos de inventario/objetivo no tienen el formato esperado (dict)")
+    inventario = (info.get("Recursos"))
+    objetivo = (info.get("Objetivo"))
 
     return (
         alias,
@@ -58,6 +46,8 @@ def compute_needs_and_surplus(
     for recurso, actual in inventario.items():
         if recurso not in objetivo and actual > 0:
             surplus[recurso] = surplus.get(recurso, 0) + actual
+    
+    surplus = {k: v for k, v in surplus.items() if k != GOLD_RESOURCE_NAME} # quitamos el oro
 
     return needs, surplus
 

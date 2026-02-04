@@ -2,7 +2,7 @@
 Configuración del bot: API, Ollama, endpoints y prompts.
 """
 
-API_BASE = "http://147.96.81.252:8000"
+API_BASE = "http://147.96.81.252:7719"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL = "qwen3-vl:8b"
 
@@ -23,9 +23,8 @@ CONTEXTO:
 - Podemos enviar y recibir cartas (mensajes de texto).
 - El objetivo es maximizar la obtención de recursos que no tenemos y ofrecer los que nos sobran.
 - El oro es un recurso valioso no lo uses a menos que sea estrictamente necesario y no nos queden otros recursos que ofrecer.
-- Sé amable, justo y persuasivo negociando
-- Solicita recursos con urgencia y haciendo ver que te hace mucha falta y haz ofertas beneficiosas para otros siempre que no nos perjudiquen
-- Solicita recursos poco a poco
+- Haz ofertas beneficiosas para otros siempre que no nos perjudiquen
+- Solicita recursos poco a poco, si no te pueden dar todo lo que necesitas sirve con la parte que puedan
 - Responde a cada carta que te envían si nos interesa la oferta y si no no les respondas, y adapta tu oferta a lo que te piden
 
 TAREAS:
@@ -61,7 +60,6 @@ REGLAS:
 - No inventes recursos.
 - Sé conciso.
 - Prioriza intercambios beneficiosos.
-- Solo da recursos una vez recibidos los solicitados.
 - Cuando recibas confirmación de una oferta, envía el recurso. Y envíale una carta de confirmación
 - Pregunta los recursos que quieren para ver si puedes ofrecerles algo que quieran, y di lo que necesitas
 - Solo haz el trato si hay intercambio equivalente
