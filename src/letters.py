@@ -5,7 +5,7 @@ Generación y análisis de cartas: prompts para Ollama y carta de estado.
 import json
 from typing import Any, Dict
 
-from .config import GOLD_RESOURCE_NAME, PROMPT_BASE
+from .config import GOLD_RESOURCE_NAME
 from .ollama_client import ollama
 
 

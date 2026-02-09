@@ -2,7 +2,7 @@ import json
 from typing import Any, Dict
 
 from . import api
-from .config import GOLD_RESOURCE_NAME, PROMPT_BASE
+from .config import GOLD_RESOURCE_NAME
 from .letters import build_trade_confirmation_letter
 from .ollama_client import ollama
 
@@ -374,7 +374,7 @@ AGENTES DISPONIBLES:
 
 CARTAS RECIBIDAS:
 {json.dumps(cartas_recibidas, indent=2)}
-""" + PROMPT_BASE
+"""
 
     respuesta = ollama(prompt)
     try:

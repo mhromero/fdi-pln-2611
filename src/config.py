@@ -1,14 +1,24 @@
 """
-Configuración del bot: API, Ollama, endpoints y prompts.
+Configuración del bot: se carga desde config.json (mismo directorio que este módulo).
 """
 
-API_BASE = "http://127.0.0.1:7719"
-OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL = "qwen3-vl:8b"
+import json
+from pathlib import Path
 
-# Endpoints para cartas/paquetes. Ajusta al esquema real de la API de la práctica.
-MAILBOX_ENDPOINT = f"{API_BASE}/buzon"
-LETTER_ENDPOINT = f"{API_BASE}/carta"
-PACKAGE_ENDPOINT = f"{API_BASE}/paquete"
+_CONFIG_PATH = Path(__file__).resolve().parent / "config.json"
 
-GOLD_RESOURCE_NAME = "oro"
+
+def _load_config() -> dict:
+    with open(_CONFIG_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+
+_c = _load_config()
+
+API_BASE = _c["api_base"]
+OLLAMA_URL = _c["ollama_url"]
+MODEL = _c["model"]
+GOLD_RESOURCE_NAME = _c["gold_resource_name"]
+MAILBOX_ENDPOINT = API_BASE + _c["mailbox_endpoint"]
+LETTER_ENDPOINT = API_BASE + _c["letter_endpoint"]
+PACKAGE_ENDPOINT = API_BASE + _c["package_endpoint"]
