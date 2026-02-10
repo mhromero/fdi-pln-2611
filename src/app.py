@@ -68,11 +68,9 @@ def main() -> None:
         json.dumps(state.surplus, ensure_ascii=False),
     )
 
-    # En lugar de una carta gigante, preparamos "mini cartas" 1 a 1
+    # En lugar de una carta gigante, mandamos "mini cartas" 1 a 1
     # combinando cada recurso que necesitamos con cada recurso que nos sobra.
-    # Se enviarán más adelante, cada 3 cartas analizadas.
-    print_section("CARTAS DE OFERTA SIMPLES PREPARADAS")
-    pending_offers = []
+    print_section("CARTAS DE OFERTA SIMPLES A ENVIAR")
     for p in people:
         for recurso_necesario in state.needs.keys():
             for recurso_sobrante in state.surplus.keys():
@@ -81,12 +79,15 @@ def main() -> None:
                     recurso_sobrante=recurso_sobrante,
                 )
                 asunto = f"Oferta: 1 {recurso_necesario} por 1 {recurso_sobrante}"
-                pending_offers.append((p, asunto, cuerpo))
-                print_kv(
-                    "Mini oferta preparada",
-                    f"{p} -> {asunto}",
-                    color=logs.GREEN,
-                )
+                try:
+                    print_kv(
+                        "Enviando mini oferta a",
+                        f"{p} -> {asunto}",
+                        color=logs.GREEN,
+                    )
+                    api.send_letter(p, asunto, cuerpo)
+                except Exception as e:
+                    print_error(f"al enviar mini oferta a {p}: {e}")
 
     if state.has_reached_objective():
         print_bot(
@@ -95,10 +96,6 @@ def main() -> None:
             success=True,
         )
         return
-
-    # Contador de cartas analizadas y puntero a la siguiente mini oferta a enviar
-    processed_letters = 0
-    next_offer_idx = 0
 
     # 1) Leer buzón una vez (ya está en state.buzon); luego bucle 2–4
     print_section("BUZÓN INICIAL")
@@ -161,26 +158,6 @@ def main() -> None:
 
             print_bot_dim(f"[BOT] Eliminando carta del buzón (id={id_carta})")
             api.delete_letter(id_carta)
-
-            # Cada 3 cartas analizadas, enviamos una mini oferta distinta (si quedan)
-            processed_letters += 1
-            if (
-                processed_letters % 3 == 0
-                and next_offer_idx < len(pending_offers)
-            ):
-                dest, asunto_oferta, cuerpo_oferta = pending_offers[next_offer_idx]
-                try:
-                    print_kv(
-                        "Enviando mini oferta diferida a",
-                        f"{dest} -> {asunto_oferta}",
-                        color=logs.GREEN,
-                    )
-                    api.send_letter(dest, asunto_oferta, cuerpo_oferta)
-                except Exception as e:
-                    print_error(
-                        f"al enviar mini oferta diferida a {dest}: {e}"
-                    )
-                next_offer_idx += 1
 
         if state.has_reached_objective():
             print_bot(
