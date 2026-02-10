@@ -73,10 +73,6 @@ NECESITAMOS:
 PODEMOS OFRECER:
 {json.dumps(surplus, ensure_ascii=False, indent=2)}
 
-Antes de tomar la decisión, modifica la oferta con los siguientes pasos:
-1) elimina de los recursos que piden los recursos que necesitamos salvo que nos sobre
-2) iguala el numero de recursos al minimo numero de recursos si piden más de lo que nosostros ofrecemos
-
 OFERTA:
 {json.dumps(oferta, ensure_ascii=False, indent=2)}
 

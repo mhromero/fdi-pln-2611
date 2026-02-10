@@ -71,7 +71,11 @@ def main() -> None:
     # En lugar de una carta gigante, mandamos "mini cartas" 1 a 1
     # combinando cada recurso que necesitamos con cada recurso que nos sobra.
     print_section("CARTAS DE OFERTA SIMPLES A ENVIAR")
+    """
     for p in people:
+        p = p["alias"]
+        if p == state.alias:
+            continue
         for recurso_necesario in state.needs.keys():
             for recurso_sobrante in state.surplus.keys():
                 cuerpo = build_simple_offer_letter(
@@ -88,7 +92,7 @@ def main() -> None:
                     api.send_letter(p, asunto, cuerpo)
                 except Exception as e:
                     print_error(f"al enviar mini oferta a {p}: {e}")
-
+    """
     if state.has_reached_objective():
         print_bot(
             "Ya hemos alcanzado el 100% de los recursos objetivo. "
@@ -111,9 +115,14 @@ def main() -> None:
 
         # 3) Procesar de más antigua a más nueva y eliminar del buzón
         for id_carta, content in sorted_letters:
+
             remitente = content.get("remi", "??")
             asunto = content.get("asunto", "")
             fecha = content.get("fecha", "")
+
+            if remitente == state.alias:
+                api.delete_letter(id_carta)
+                continue
 
             print_section(f"CARTA RECIBIDA de {remitente}")
             print_kv("ID", id_carta)
